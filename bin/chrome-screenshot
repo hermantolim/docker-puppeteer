@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/local/bin/google-chrome-shim \
+    --screenshot \
+    https://httpbin.org

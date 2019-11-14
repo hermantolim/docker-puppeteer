@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const fs = require('fs')
+const args = fs
+    .readFileSync(process.env.HOME + '/.config/chrome-flags.conf')
+    .toString('utf8')
+    .split('\n')
+    .filter(line => line.indexOf('#') === -1 && line !== '')
+
+const pptr = require('puppeteer-core')
+const launchOpts = {
+    headless: true,
+    args,
+    executablePath: '/usr/local/bin/google-chrome-shim'
+}
+
+async function run() {
+    try {
+        const browser = await pptr.launch(launchOpts)
+        const page = await browser.newPage()
+
+        await page.goto('https://httpbin.org/ip')
+        await page.screenshot({ path: process.env.HOME + '/puppeteer.png' })
+        const content = await page.content()
+        console.log(" --->", content)
+        await browser.close()
+        process.exit(0)
+    } catch (e) {
+        console.error(e.message)
+        process.exit(1)
+    }
+}
+
+run()

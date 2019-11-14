@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if /usr/local/bin/google-chrome-shim \
+    --dump-dom \
+    https://httpbin.org >/dev/null; then
+    echo " ---> ${0##*/} success"
+    exit 0
+else
+    echo " ---> ${0##*/} failed"
+    exit 1
+fi
