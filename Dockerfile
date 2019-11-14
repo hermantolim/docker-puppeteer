@@ -70,6 +70,7 @@ WORKDIR /home/chrome
 RUN ~/test.sh \
 	&& rm -rf ~/test.sh \
 		~/screenshot.png \
+		~/puppeteer.png \
 		~/.pki \
 		~/.cache
 
