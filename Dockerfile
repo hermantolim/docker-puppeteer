@@ -46,21 +46,19 @@ RUN curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - 
     && apt-get -qqy clean
     
 COPY ./build /tmp/build
-COPY ./bin/* /usr/local/bin/
+COPY ./bin /usr/local/bin
 
 RUN cp -a /tmp/build/google-chrome-$GOOGLE_CHROME_CHANNEL /usr/local/bin/google-chrome-shim \
 	&& chmod 0755 /usr/local/bin/google-chrome-shim \
-    && mkdir -p /etc/skel/.config \
-    && cp /tmp/build/chrome-flags.conf /etc/skel/.config \
-    && rm -rf /bin/sh \
-    && ln -s /bin/bash /bin/sh \
+	&& mkdir -m 0755 -p /etc/skel/.config \
+    && cp /tmp/build/chrome-flags.conf /etc/skel/.config/ \
+	&& chmod 0644 /etc/skel/.config/chrome-flags.conf \
     && GOOGLE_CHROME_VERSION=$(/opt/google/chrome/chrome --product-version | cut -d'.' -f1) \
     && npm update -g npm \
     && npm install --production --global puppeteer-core@chrome-$GOOGLE_CHROME_VERSION
 
 RUN useradd -m -G audio,video chrome \
 	&& usermod -L chrome \
-    && mkdir -p /tmp/test \
     && mv /tmp/build/test.sh /home/chrome/ \
     && chown -R chrome:chrome /home/chrome/ \
 	&& rm -rf /tmp/*
@@ -70,7 +68,6 @@ WORKDIR /home/chrome
 RUN ~/test.sh \
 	&& rm -rf ~/test.sh \
 		~/screenshot.png \
-		~/puppeteer.png \
 		~/.pki \
 		~/.cache
 
